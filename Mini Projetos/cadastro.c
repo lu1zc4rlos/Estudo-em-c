@@ -10,7 +10,8 @@ void limpar_tela()
 #ifdef _WIN32
     system("CLS");
 #else
-    system("clear");2
+    system("clear");
+    
 
 #endif
 }
@@ -25,90 +26,92 @@ typedef struct Pessoa
     struct Pessoa *proximo;
 } Pessoa;
 
-void carregar_cadastro(Pessoa **lista, int *numero, FILE **filee){
+void carregar_cadastro(Pessoa **lista, int *numero, FILE **filee)
+{
     *filee = fopen("cadastro.txt", "r");
-    if(*filee==NULL){
+    if (*filee == NULL)
+    {
         printf("Erro ao abrir arquivo!");
         return;
     }
 
     fseek(*filee, 0, SEEK_END);
     long tamanho = ftell(*filee);
-    if(tamanho == 0){
+    if (tamanho == 0)
+    {
         return;
     }
 
     rewind(*filee);
-    
+
     while (1)
     {
         Pessoa *aux, *novo = (Pessoa *)malloc(sizeof(Pessoa));
 
-        if (novo==NULL)
+        if (novo == NULL)
         {
             printf("Erro ao alocar memoria!\n");
             return;
         }
-        
 
-            if(fgets(novo->numero_cadastro_char, sizeof(novo->numero_cadastro_char), *filee) != NULL){
+        if (fgets(novo->numero_cadastro_char, sizeof(novo->numero_cadastro_char), *filee) != NULL)
+        {
             novo->numero_cadastro_char[strcspn(novo->numero_cadastro_char, "\n")] = '\0';
             novo->numero_cadastro = atoi(novo->numero_cadastro_char);
-            }
-            else{
-                free(novo);
-                break;
-                return;
-            }
-            
+        }
+        else
+        {
+            free(novo);
+            break;
+            return;
+        }
 
-            if(fgets(novo->nome, sizeof(novo->nome), *filee) != NULL){
+        if (fgets(novo->nome, sizeof(novo->nome), *filee) != NULL)
+        {
             novo->nome[strcspn(novo->nome, "\n")] = '\0';
-            }
-            else{
-                printf("Erro ao ler nome!\n");
-                free(novo);
-                return;
-            }
-            
+        }
+        else
+        {
+            printf("Erro ao ler nome!\n");
+            free(novo);
+            return;
+        }
 
-            if(fgets(novo->idade_char, sizeof(novo->idade_char), *filee) != NULL){
+        if (fgets(novo->idade_char, sizeof(novo->idade_char), *filee) != NULL)
+        {
             novo->idade_char[strcspn(novo->idade_char, "\n")] = '\0';
             novo->idade = atoi(novo->idade_char);
-           
-            }
-            else{
-                 printf("Erro ao ler idade!\n");
-                 free(novo);
-                 return;
-            }
-        
-             (*numero)++;
-                
-            novo->proximo = NULL;
-            if (*lista == NULL)
-            {
-                *lista = novo;
-            }
-
-            else
-            {
-                aux = *lista;
-                while (aux->proximo)
-                {
-                    aux = aux->proximo;
-                }
-                aux->proximo = novo;
-            }
-
         }
-        fclose(*filee);
-      }
-       
-    
+        else
+        {
+            printf("Erro ao ler idade!\n");
+            free(novo);
+            return;
+        }
+
+        (*numero)++;
+
+        novo->proximo = NULL;
+        if (*lista == NULL)
+        {
+            *lista = novo;
+        }
+
+        else
+        {
+            aux = *lista;
+            while (aux->proximo)
+            {
+                aux = aux->proximo;
+            }
+            aux->proximo = novo;
+        }
+    }
+    fclose(*filee);
+}
+
 void cadastrar(Pessoa **lista, int *numero, FILE **filee)
 {
-   
 
     for (int cont = 0; cont < TAM; cont++)
     {
@@ -119,22 +122,21 @@ void cadastrar(Pessoa **lista, int *numero, FILE **filee)
             *filee = fopen("cadastro.txt", "a");
 
             novo->numero_cadastro = (*numero)++;
-            fprintf(*filee,"%d\n", novo->numero_cadastro);
+            fprintf(*filee, "%d\n", novo->numero_cadastro);
             printf("Cadastro pessoa %d\n", novo->numero_cadastro);
 
             printf("Nome: ");
             fgets(novo->nome, sizeof(novo->nome), stdin);
             novo->nome[strcspn(novo->nome, "\n")] = '\0';
-            fputs(novo->nome, *filee);  
+            fputs(novo->nome, *filee);
 
             printf("Idade: ");
             scanf("%d", &novo->idade);
-            while (getchar() != '\n');
-            fprintf(*filee,"\n%d\n", novo->idade);
-            
+            while (getchar() != '\n')
+                ;
+            fprintf(*filee, "\n%d\n", novo->idade);
 
             fclose(*filee);
-                
 
             novo->proximo = NULL;
             if (*lista == NULL)
@@ -300,7 +302,8 @@ void alterar_cadastro(Pessoa **lista, FILE **filee)
         int opcao;
         printf("Opcao: ");
         scanf("%d", &opcao);
-        while(getchar()!='\n');
+        while (getchar() != '\n')
+            ;
 
         switch (opcao)
         {
@@ -314,23 +317,24 @@ void alterar_cadastro(Pessoa **lista, FILE **filee)
             getchar();
             limpar_tela();
 
-             *filee = fopen("cadastro.txt", "w");
-    
-     while (temp)
-    {
-        fprintf(*filee,"%d\n", temp->numero_cadastro);
-        fputs(temp->nome, *filee);
-        fprintf(*filee,"\n%d\n", temp->idade);
-        temp = temp->proximo;
-    }
-   fclose(*filee);
+            *filee = fopen("cadastro.txt", "w");
+
+            while (temp)
+            {
+                fprintf(*filee, "%d\n", temp->numero_cadastro);
+                fputs(temp->nome, *filee);
+                fprintf(*filee, "\n%d\n", temp->idade);
+                temp = temp->proximo;
+            }
+            fclose(*filee);
 
             return;
             break;
         case 2:
             printf("Digite nova idade: ");
             scanf("%d", &aux->idade);
-            while (getchar() != '\n');
+            while (getchar() != '\n')
+                ;
             limpar_tela();
             printf("Idade alterado com sucesso!\n");
             printf("\n\nPrecione tecla enter para voltar ao menu...");
@@ -338,25 +342,25 @@ void alterar_cadastro(Pessoa **lista, FILE **filee)
             limpar_tela();
 
             *filee = fopen("cadastro.txt", "w");
-    
-     while (temp)
-    {
-        fprintf(*filee,"%d\n", temp->numero_cadastro);
-        fputs(temp->nome, *filee);
-        fprintf(*filee,"\n%d\n", temp->idade);
-        temp = temp->proximo;
-    }
-   fclose(*filee);
+
+            while (temp)
+            {
+                fprintf(*filee, "%d\n", temp->numero_cadastro);
+                fputs(temp->nome, *filee);
+                fprintf(*filee, "\n%d\n", temp->idade);
+                temp = temp->proximo;
+            }
+            fclose(*filee);
 
             return;
             break;
         default:
             limpar_tela();
-                printf("opcao invalida!\n");
-                printf("redirecionando para tela principal...");
-                sleep(5);
-                limpar_tela();
-                return;          
+            printf("opcao invalida!\n");
+            printf("redirecionando para tela principal...");
+            sleep(5);
+            limpar_tela();
+            return;
             break;
         }
     }
@@ -364,7 +368,6 @@ void alterar_cadastro(Pessoa **lista, FILE **filee)
     {
         printf("Nenhum cadastro encontrado!");
     }
-    
 }
 
 int main()
@@ -374,10 +377,10 @@ int main()
 
     Pessoa *lista = NULL;
     int numero = 1;
-    
+
     fclose(filee);
 
-   carregar_cadastro(&lista, &numero, &filee);
+    carregar_cadastro(&lista, &numero, &filee);
 
     while (1)
     {
@@ -409,7 +412,7 @@ int main()
             buscar_cadastro(&lista);
             break;
         case 4:
-            alterar_cadastro(&lista,&filee);
+            alterar_cadastro(&lista, &filee);
             break;
         case 5:
             exit(0);
@@ -422,5 +425,5 @@ int main()
             break;
         }
     }
-     return 0;
+    return 0;
 }
